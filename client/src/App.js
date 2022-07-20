@@ -1,7 +1,8 @@
-import { Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes, Navigate} from "react-router-dom";
 import Main from "./components/Main";
 import Signup from "./components/Singup";
 import Login from "./components/Login";
+import UserProfile from "./components/UserProfile";
 
 function App() {
 	const user = localStorage.getItem("token");
@@ -12,6 +13,8 @@ function App() {
 			<Route path="/signup" exact element={<Signup />} />
 			<Route path="/login" exact element={<Login />} />
 			<Route path="/" element={<Navigate replace to="/login" />} />
+			{user && <Route path="/userprofile" exact element={<UserProfile />} />}
+			<Route path="*" element={<Navigate replace to="login"/>}/>
 		</Routes>
 	);
 }
