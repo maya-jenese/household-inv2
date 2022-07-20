@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import styles from "./styles.module.css";
@@ -29,6 +29,11 @@ const Login = () => {
 			}
 		}
 	};
+
+	//Set the page tab title
+	useEffect(() => {
+		document.title = "Login - West Boca Make-Believe Retirement Community"
+	});
 
 	return (
 		<div className={styles.login_container}>
