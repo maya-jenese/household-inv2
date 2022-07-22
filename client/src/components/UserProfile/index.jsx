@@ -6,7 +6,7 @@ import {useNavigate} from "react-router-dom";
 const UserProfile = () => {
     const navigate = useNavigate()
 
-    const [data, setData] = useState("");
+    const [data, setData] = useState({});
 
     const navigateToProfile = () => {
         navigate('/userprofile');
@@ -31,7 +31,7 @@ const UserProfile = () => {
             headers: {"Content-Type": "application/json"},
             method: "POST",
             body: JSON.stringify({token: localStorage.getItem("token")})
-        }).then(response => response.json()).then(data => setData(data.message));
+        }).then(response => response.json()).then(data => setData(data));
     }, []);
 
     //Set the page tab title
@@ -67,8 +67,8 @@ const UserProfile = () => {
                         <input
                             type="text"
                             placeholder="First Name"
-                            name="fname"
-                            value={data.fname}
+                            name="firstName"
+                            value={data.firstName}
                             required
                             className={styles.input}
                         />
@@ -76,8 +76,8 @@ const UserProfile = () => {
                         <input
                             type="text"
                             placeholder="Last Name"
-                            name="lname"
-                            value={data.lname}
+                            name="lastName"
+                            value={data.lastName}
                             required
                             className={styles.input}
                         />
@@ -120,7 +120,7 @@ const UserProfile = () => {
                     </div>
                 </div>
                 <div id={styles.add_user}>
-                    <h1 id={styles.section_text}>Add Authorized Users</h1>
+                    <h1 id={styles.section_text}>Authorized Users</h1>
                     <button type="submit" className={styles.green_btn}>
                         + Add User
                     </button>
@@ -148,7 +148,6 @@ const UserProfile = () => {
                     </table>
                 </div>
             </div>
-            <ul>{data}</ul>
             <footer>
                 <h1>All rights reserved © copyright 2022, West Boca Make-Believe Retirement Community</h1>
             </footer>

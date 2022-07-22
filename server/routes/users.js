@@ -26,12 +26,14 @@ router.post("/", async (req, res) => {
 });
 
 router.post("/getuserinfo", async (req, res) => {
-	console.log(req.body);
+	//console.log(req.body);
 	try {
 		const tokenContents = jwt.verify(req.body.token, `${process.env.JWTPRIVATEKEY}`);
 		console.log(tokenContents);
 
-		const userInfo = await User.findOne({_id: tokenContents});
+		const userInfo = await User.findOne({_id: tokenContents._id});
+		console.log(userInfo);
+		return res.send(userInfo);
 
 	} catch (error) {
 		res.status(500).send({ message: "Internal Server Error" });
