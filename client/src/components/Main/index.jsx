@@ -12,7 +12,7 @@ const Main = () => {
 	};
 
 	const navigateToProperty = () => {
-		navigate('/property');
+		navigate('/add-property');
 	};
 
 	const navigateHome = () => {
