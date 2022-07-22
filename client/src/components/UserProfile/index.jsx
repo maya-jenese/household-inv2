@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import styles from "./styles.module.css";
 import {useNavigate} from "react-router-dom";
+import logo from '../../logo_normal.png';
 
 
 const UserProfile = () => {
@@ -42,6 +43,7 @@ const UserProfile = () => {
     return (
         <div className={styles.main_container}>
             <nav className={styles.navbar}>
+                <img id={styles.logo} src={logo}/>
                 <h1>West Boca Make-Believe Retirement Community</h1>
                 <div className={styles.buttons}>
                     <button className={styles.white_btn} onClick={navigateHome}>
