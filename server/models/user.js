@@ -9,7 +9,9 @@ const userSchema = new Schema({
 	lastName: { type: String, required: true },
 	email: { type: String, required: true },
 	password: { type: String, required: true },
-	properties: [{ type: Schema.Types.ObjectId, ref: 'Property' }]
+	properties: [{ type: Schema.Types.ObjectId, ref: 'Property' }],
+	users_authorized: [{ type: Schema.Types.ObjectId, ref: 'AuthUsers' }], //Users that are authorized IDs
+	isAdmin: { type: Boolean, required: false, default: false} //Boolean for if a user is an Admin, Default: false
 });
 
 userSchema.methods.generateAuthToken = function () {

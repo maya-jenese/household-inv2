@@ -1,10 +1,14 @@
 import {useNavigate} from "react-router-dom";
 import styles from "./styles.module.css";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
+import logo from '../../logo_normal.png';
 import * as url from "url";
 
 const Main = () => {
 	const navigate = useNavigate();
+
+	const [data, setData] = useState("");
+
 
 	const navigateToProfile = () => {
 		navigate('/userprofile');
@@ -17,6 +21,19 @@ const Main = () => {
 	const navigateHome = () => {
 		navigate('/');
 	};
+
+	const navigateToAdmin = () => {
+		navigate('/admin');
+	};
+
+	useEffect(() => {
+		fetch("http://localhost:8080/api/users/getuserinfo", {
+			headers: {"Content-Type": "application/json"},
+			method: "POST",
+			body: JSON.stringify({token: localStorage.getItem("token")})
+		}).then(response => response.json()).then(data => setData(data));
+	}, []);
+
 
 	const handleLogout = () => {
 		localStorage.removeItem("token");
@@ -31,6 +48,7 @@ const Main = () => {
 	return (
 		<div className={styles.main_container}>
 			<nav className={styles.navbar}>
+				<img id={styles.logo} src={logo}/>
 				<h1>West Boca Make-Believe Retirement Community</h1>
 				<div className={styles.buttons}>
 					<button className={styles.white_btn} onClick={navigateHome}>
@@ -41,6 +59,9 @@ const Main = () => {
 					</button>
 					<button className={styles.white_btn} onClick={navigateToProfile}>
 						Profile
+					</button>
+					<button hidden={!data.isAdmin} className={styles.white_btn} onClick={navigateToAdmin}>
+						Admin
 					</button>
 					<button className={styles.white_btn} id={styles.red_hover} onClick={handleLogout}>
 						Logout

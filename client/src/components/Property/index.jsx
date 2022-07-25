@@ -1,6 +1,8 @@
 import {useEffect, useState} from "react";
 import styles from "./styles.module.css";
 import {useNavigate} from "react-router-dom";
+import logo from "../../logo_normal.png";
+
 
 
 const Property = () => {
@@ -14,6 +16,10 @@ const Property = () => {
 
 	const navigateToProperty = () => {
 		navigate('/property');
+	};
+
+	const navigateToAdmin = () => {
+		navigate('/admin');
 	};
 
 	const navigateHome = () => {
@@ -30,7 +36,7 @@ const Property = () => {
 			headers: {"Content-Type": "application/json"},
 			method: "POST",
 			body: JSON.stringify({token: localStorage.getItem("token")})
-		}).then(response => response.json()).then(data => setData(data.message));
+		}).then(response => response.json()).then(data => setData(data));
 	}, []);
 
 	//Set the page tab title
@@ -41,6 +47,7 @@ const Property = () => {
 	return (
 		<div className={styles.main_container}>
 			<nav className={styles.navbar}>
+				<img id={styles.logo} src={logo}/>
 				<h1>West Boca Make-Believe Retirement Community</h1>
 				<div className={styles.buttons}>
 					<button className={styles.white_btn} onClick={navigateHome}>
@@ -51,6 +58,9 @@ const Property = () => {
 					</button>
 					<button className={styles.white_btn} onClick={navigateToProfile}>
 						Profile
+					</button>
+					<button hidden={!data.isAdmin} className={styles.white_btn} onClick={navigateToAdmin}>
+						Admin
 					</button>
 					<button className={styles.white_btn} id={styles.red_hover} onClick={handleLogout}>
 						Logout
