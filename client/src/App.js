@@ -5,6 +5,7 @@ import Login from "./components/Login";
 import UserProfile from "./components/UserProfile";
 import AddProperty from "./components/AddProperty";
 import Property from "./components/Property";
+import Admin from "./components/Admin";
 
 function App() {
 	const user = localStorage.getItem("token");
@@ -17,6 +18,7 @@ function App() {
 			<Route path="/" element={<Navigate replace to="/login" />} />
 			{user && <Route path="/userprofile" exact element={<UserProfile />} />}
 			{user && <Route path="/Property" exact element={<Property />} />}
+			{user && <Route path="/Admin" exact element={<Admin />} />}
 			<Route path='/add-property' exact element={<AddProperty />} />
 			<Route path="*" element={<Navigate replace to="login"/>}/>
 		</Routes>

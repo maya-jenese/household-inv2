@@ -2,12 +2,34 @@ import {useEffect, useState} from "react";
 import styles from "./styles.module.css";
 import {useNavigate} from "react-router-dom";
 import logo from '../../logo_normal.png';
+import axios from "axios";
 
 
 const UserProfile = () => {
-    const navigate = useNavigate()
+    const [data, setData] = useState({
+        email: "",
+        firstName: "",
+        lastName: ""
+    });
 
-    const [data, setData] = useState({});
+    const [password_data, setPasswordData] = useState({
+        current_password: "",
+        new_password: "",
+        new_password_confirm: ""
+    });
+
+    const [error, setError] = useState("");
+
+    const handleChange = ({ currentTarget: input }) => {
+        setData({ ...data, [input.name]: input.value });
+    };
+
+    const handlePasswordChange = ({ currentTarget: input }) => {
+        setPasswordData({ ...password_data, [input.name]: input.value });
+    };
+
+
+    const navigate = useNavigate()
 
     const navigateToProfile = () => {
         navigate('/userprofile');
@@ -17,10 +39,13 @@ const UserProfile = () => {
         navigate('/property');
     };
 
+    const navigateToAdmin = () => {
+        navigate('/admin');
+    };
+
     const navigateHome = () => {
         navigate('/');
     };
-
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -34,6 +59,50 @@ const UserProfile = () => {
             body: JSON.stringify({token: localStorage.getItem("token")})
         }).then(response => response.json()).then(data => setData(data));
     }, []);
+
+    useEffect(() => {
+        fetch("http://localhost:8080/api/users/getuserinfo", {
+            headers: {"Content-Type": "application/json"},
+            method: "POST",
+            body: JSON.stringify({token: localStorage.getItem("token")})
+        }).then(response => response.json()).then(password_data => setPasswordData(password_data));
+    }, []);
+
+    const updateDetails = async (e) => {
+        e.preventDefault();
+        try {
+            console.log(data);
+            const url = "http://localhost:8080/api/updateprofile";
+            const { data: res } = await axios.post(url, data);
+            console.log(res.message);
+        } catch (error) {
+            if (
+                error.response &&
+                error.response.status >= 400 &&
+                error.response.status <= 500
+            ) {
+                setError(error.response.data.message);
+            }
+        }
+    };
+
+    const updatePassword = async (e) => {
+        e.preventDefault();
+        try {
+            console.log(password_data);
+            const url = "http://localhost:8080/api/updateprofile/update-password";
+            const { data: res } = await axios.post(url, password_data);
+            console.log(res.message);
+        } catch (error) {
+            if (
+                error.response &&
+                error.response.status >= 400 &&
+                error.response.status <= 500
+            ) {
+                setError(error.response.data.message);
+            }
+        }
+    };
 
     //Set the page tab title
     useEffect(() => {
@@ -55,6 +124,9 @@ const UserProfile = () => {
                     <button className={styles.white_btn} onClick={navigateToProfile}>
                         Profile
                     </button>
+                    <button hidden={!data.isAdmin} className={styles.white_btn} onClick={navigateToAdmin}>
+                        Admin
+                    </button>
                     <button className={styles.white_btn} id={styles.red_hover} onClick={handleLogout}>
                         Logout
                     </button>
@@ -64,63 +136,81 @@ const UserProfile = () => {
                 <h1 id={styles.section_text}>My Profile</h1>
                 <div className={styles.row}>
                     <div className={styles.columns}>
-                        <h1>Edit Details</h1>
-                        <h3>First Name</h3>
-                        <input
-                            type="text"
-                            placeholder="First Name"
-                            name="firstName"
-                            value={data.firstName}
-                            required
-                            className={styles.input}
-                        />
-                        <h3>Last Name</h3>
-                        <input
-                            type="text"
-                            placeholder="Last Name"
-                            name="lastName"
-                            value={data.lastName}
-                            required
-                            className={styles.input}
-                        />
-                        <h3>Email</h3>
-                        <input
-                            type="email"
-                            placeholder="Email"
-                            name="email"
-                            value={data.email}
-                            required
-                            className={styles.input}
-                        />
-                        <button type="submit" className={styles.green_btn}>
-                            Update Profile
-                        </button>
+                        <form className={styles.form_container} onSubmit={updateDetails}>
+                            <h1>Edit Details</h1>
+                            <h3>First Name</h3>
+                            <input
+                                type="text"
+                                placeholder="First Name"
+                                name="firstName"
+                                onChange={handleChange}
+                                value={data.firstName}
+                                required
+                                className={styles.input}
+                            />
+                            <h3>Last Name</h3>
+                            <input
+                                type="text"
+                                placeholder="Last Name"
+                                name="lastName"
+                                onChange={handleChange}
+                                value={data.lastName}
+                                required
+                                className={styles.input}
+                            />
+                            <h3>Email</h3>
+                            <input
+                                type="email"
+                                placeholder="Email"
+                                name="email"
+                                onChange={handleChange}
+                                value={data.email}
+                                required
+                                className={styles.input}
+                            />
+                            <button type="submit" className={styles.green_btn}>
+                                Update Profile
+                            </button>
+                        </form>
                     </div>
                     <div className={styles.columns}>
-                        <h1>Change Password</h1>
-                        <h3>Current Password</h3>
-                        <input
-                            type="password"
-                            placeholder="Current Password"
-                            name="email"
-                            value={data.password}
-                            required
-                            className={styles.input}
-                        />
-                        <h3>New Password</h3>
-                        <input
-                            type="password"
-                            placeholder="New Password"
-                            name="email"
-                            value={data.password}
-                            required
-                            className={styles.input}
-                        />
-                        <button type="submit" className={styles.green_btn}>
-                            Update Password
-                        </button>
+                        <form className={styles.form_container} onSubmit={updatePassword}>
+                            <h1>Change Password</h1>
+                            <h3>Current Password</h3>
+                            <input
+                                type="password"
+                                placeholder="Current Password"
+                                name="current_password"
+                                onChange={handlePasswordChange}
+                                required
+                                className={styles.input}
+                            />
+                            <h3>New Password</h3>
+                            <input
+                                type="password"
+                                placeholder="New Password"
+                                name="new_password"
+                                onChange={handlePasswordChange}
+                                required
+                                className={styles.input}
+                            />
+                            <h3>Confirm New Password</h3>
+                            <input
+                                type="password"
+                                placeholder="Confirm New Password"
+                                name="new_password_confirm"
+                                onChange={handlePasswordChange}
+                                required
+                                className={styles.input}
+                            />
+                            {error && <div className={styles.message}>{error}</div>}
+                            <button type="submit" className={styles.green_btn}>
+                                Update Password
+                            </button>
+                        </form>
                     </div>
                 </div>
+
                 <div id={styles.add_user}>
                     <h1 id={styles.section_text}>Authorized Users</h1>
                     <button type="submit" className={styles.green_btn}>

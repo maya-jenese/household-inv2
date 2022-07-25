@@ -187,10 +187,20 @@ table tr:hover {background-color: #ddd;}
 	padding: 10px 0;
 }
 
+#below {
+	margin-top: 190px;
+}
+
 table th {
 	padding-top: 12px;
 	padding-bottom: 12px;
 	text-align: left;
 	background-color: #049af8;
+	color: white;
+}
+
+#header {
+	text-align: center;
+	background-color: #d34141;
 	color: white;
 }

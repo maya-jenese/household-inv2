@@ -18,6 +18,10 @@ const Property = () => {
 		navigate('/property');
 	};
 
+	const navigateToAdmin = () => {
+		navigate('/admin');
+	};
+
 	const navigateHome = () => {
 		navigate('/');
 	};
@@ -32,7 +36,7 @@ const Property = () => {
 			headers: {"Content-Type": "application/json"},
 			method: "POST",
 			body: JSON.stringify({token: localStorage.getItem("token")})
-		}).then(response => response.json()).then(data => setData(data.message));
+		}).then(response => response.json()).then(data => setData(data));
 	}, []);
 
 	//Set the page tab title
@@ -54,6 +58,9 @@ const Property = () => {
 					</button>
 					<button className={styles.white_btn} onClick={navigateToProfile}>
 						Profile
+					</button>
+					<button hidden={!data.isAdmin} className={styles.white_btn} onClick={navigateToAdmin}>
+						Admin
 					</button>
 					<button className={styles.white_btn} id={styles.red_hover} onClick={handleLogout}>
 						Logout
