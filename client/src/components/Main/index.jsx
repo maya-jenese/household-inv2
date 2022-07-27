@@ -15,7 +15,7 @@ const Main = () => {
 	};
 
 	const navigateToProperty = () => {
-		navigate('/add-property');
+		navigate('/property');
 	};
 
 	const navigateHome = () => {
