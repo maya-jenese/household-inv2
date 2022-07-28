@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const Joi = require("joi");
 const router = express.Router();
 const passwordComplexity = require("joi-password-complexity");
+const jwt = require("jsonwebtoken");
 
 router.post("/", async (req, res) => {
 	User.findByIdAndUpdate(
@@ -17,6 +18,7 @@ router.post("/", async (req, res) => {
 			if (err) {
 				console.log(err)
 			} else {
+				res.status(500).send({ message: "User details updated." });
 				console.log("Updated User : ", user);
 			}
 		})
@@ -65,6 +67,32 @@ router.post("/update-password", async (req, res) => {
 	catch (e) {
 		return e;
 	}
+});
+
+router.post("/add-authorized-user", async (req, res) => {
+	if (req.body.authorized_email === req.body.email)
+		return res.status(500).send({ message: "Emails are the same."});
+
+	const authorized_user = await User.findOne({email: req.body.authorized_email});
+
+	User.findOneAndUpdate(
+		{email: req.body.email},
+		{
+			$addToSet: { users_authorized: authorized_user}
+		},
+		function(err, user) {
+			if (err) {
+				console.log(err)
+			} else {
+				res.status(500).send({ message: "User has been authorized or user is already authorized." });
+				console.log("Authorized user added or already exists in authorized users.");
+			}
+		})
+});
+
+router.post("/get-authorized-users", async (req, res) => {
+	const authorized_users_ids = await User.find({email: req.body.email}).select('users_authorized');
+	console.log(authorized_users_ids);
 });
 
 const validate = (data) => {

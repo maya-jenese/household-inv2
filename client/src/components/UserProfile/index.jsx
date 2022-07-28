@@ -12,10 +12,19 @@ const UserProfile = () => {
         lastName: ""
     });
 
+    const [authorizedUsers, setAuthorizedUsers] = useState({
+        id: data.email
+    });
+
     const [password_data, setPasswordData] = useState({
         current_password: "",
         new_password: "",
         new_password_confirm: ""
+    });
+
+    const [authorizedEmail, setAuthorizedEmail] = useState({
+        email: "",
+        authorized_email: ""
     });
 
     const [error, setError] = useState("");
@@ -28,6 +37,10 @@ const UserProfile = () => {
         setPasswordData({ ...password_data, [input.name]: input.value });
     };
 
+    const handleSetAuthorizedEmail = ({ currentTarget: input }) => {
+        authorizedEmail.email = data.email;
+        setAuthorizedEmail({ ...authorizedEmail, [input.name]: input.value });
+    };
 
     const navigate = useNavigate()
 
@@ -103,6 +116,41 @@ const UserProfile = () => {
             }
         }
     };
+
+    const addAuthorizedUser = async (e) => {
+        e.preventDefault();
+        try {
+            console.log(authorizedEmail);
+            const url = "http://localhost:8080/api/updateprofile/add-authorized-user";
+            const { data: res } = await axios.post(url, authorizedEmail);
+            console.log(res.message);
+        } catch (error) {
+            if (
+                error.response &&
+                error.response.status >= 400 &&
+                error.response.status <= 500
+            ) {
+                setError(error.response.data.message);
+            }
+        }
+    };
+
+    useEffect(async () => {
+        try {
+            console.log(data);
+            const url = "http://localhost:8080/api/updateprofile/get-authorized-users";
+            const {data: res} = await axios.post(url, data);
+            console.log(res.message);
+        } catch (error) {
+            if (
+                error.response &&
+                error.response.status >= 400 &&
+                error.response.status <= 500
+            ) {
+                setError(error.response.data.message);
+            }
+        }
+    });
 
     //Set the page tab title
     useEffect(() => {
@@ -203,40 +251,49 @@ const UserProfile = () => {
                                 required
                                 className={styles.input}
                             />
-                            {error && <div className={styles.message}>{error}</div>}
                             <button type="submit" className={styles.green_btn}>
                                 Update Password
                             </button>
                         </form>
                     </div>
+                    <div className={styles.columns}>
+                        <form className={styles.form_container} onSubmit={addAuthorizedUser}>
+                            <h1>Add Authorized User</h1>
+                            <h3>Authorized User's Email</h3>
+                            <input
+                                type="email"
+                                placeholder="Authorized User's Email"
+                                name="authorized_email"
+                                onChange={handleSetAuthorizedEmail}
+                                required
+                                className={styles.input}
+                            />
+                            <button type="submit" className={styles.green_btn}>
+                                Add Authorized User
+                            </button>
+                        </form>
+                    </div>
                 </div>
-
+                {error && <div className={styles.message}>{error}</div>}
                 <div id={styles.add_user}>
                     <h1 id={styles.section_text}>Authorized Users</h1>
-                    <button type="submit" className={styles.green_btn}>
-                        + Add User
-                    </button>
-                    <button type="submit" className={styles.red_btn}>
-                        - Remove User
-                    </button>
                 </div>
                 <div id={styles.current_users}>
                     <table>
-                        <tr>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Email</th>
-                        </tr>
-                        <tr>
-                            <td>Alex</td>
-                            <td>Smith</td>
-                            <td>alex.smith@gmail.com</td>
-                        </tr>
-                        <tr>
-                            <td>John</td>
-                            <td>Doe</td>
-                            <td>john.doe@gmail.com</td>
-                        </tr>
+                        <tbody>
+                            <tr>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Email</th>
+                                <th>Actions</th>
+                            </tr>
+                            <tr>
+                                <td>Kelvin</td>
+                                <td>Dhoman</td>
+                                <td>Kelvin.dhoman@gmail.com</td>
+                                <button className={styles.removeBtn}>Remove Access</button>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
