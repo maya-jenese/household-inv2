@@ -7,14 +7,6 @@ import axios from "axios";
 const Property = () => {
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  // 	fetch("http://localhost:8080/api/property")
-  // 		.then(res => res.json())
-  // 		.then(jsonRes => setProperties(jsonRes));
-  // 	console.log("HERE")
-  // 	console.log(properties);
-  // }, []);
-
   const navigateToProfile = () => {
     navigate("/userprofile");
   };
@@ -40,9 +32,7 @@ const Property = () => {
     window.location.reload();
   };
 
-  //const [error, setError] = useState("");
   const [data, setData] = useState("");
-  //const [userData, setUserData] = useState("");
 
   // tracks property state w/ 'properties'
   const [properties, setProperties] = useState([
@@ -52,6 +42,10 @@ const Property = () => {
       property_quantity: 0,
     },
   ]);
+
+  const [newDescription, setNewDescription] = useState("");
+  const [newCost, setNewCost] = useState(0);
+  const [newQuantity, setNewQuantity] = useState(0);
 
   useEffect(() => {
     fetch("http://localhost:8080/api/users/getuserinfo", {
@@ -63,44 +57,40 @@ const Property = () => {
       .then((data) => setData(data));
   }, []);
 
-  // Gets user data
-  //   useEffect(() => {
-  //     fetch("http://localhost:8080/api/users/getuserinfo", {
-  //       headers: { "Content-Type": "application/json" },
-  //       method: "POST",
-  //       body: JSON.stringify({ token: localStorage.getItem("token") }),
-  //     })
-  //       .then((response) => response.json())
-  //       .then((userData) => setUserData(userData));
-  //   }, []);
-
   useEffect(() => {
     axios
       .get("http://localhost:8080/api/property/get-properties")
       .then((res) => {
         setProperties(res.data.data.userProperties);
       });
-
-    // axios.get('http://localhost:8080/property')
-    // 	.then(res => res.json())
-    // 	.then(jsonRes => setProperties(jsonRes));
-
-    // try {
-    //   properties.user_id = userData._id;
-    //   console.log(properties);
-    //   const url = "http://localhost:8080/api/property"; // api url that you're trying to access
-    //   const { data: res } = axios.get(url); // 2nd param = info getting put into req.body
-    //   console.log(res.message);
-    // } catch (error) {
-    //   if (
-    //     error.response &&
-    //     error.response.status >= 400 &&
-    //     error.response.status <= 500
-    //   ) {
-    //     setError(error.response.data.message);
-    //   }
-    // }
   }, []);
+
+  // Update property description
+  const updateDescription = (id) => {
+    axios.put("http://localhost:8080/api/property/update-property", {
+      id,
+      newDescription,
+    });
+  };
+
+  // Update property cost
+  const updateCost = (id) => {
+    axios.put("http://localhost:8080/api/property/update-property", {
+      id,
+      newCost,
+    });
+  };
+
+  const updateQuantity = (id) => {
+    axios.put("http://localhost:8080/api/property/update-property", {
+      id,
+      newQuantity,
+    });
+  };
+
+  const deleteProperty = (id) => {
+    axios.delete(`http://localhost:8080/api/property/delete-property/${id}`);
+  };
 
   //Set the page tab title
   useEffect(() => {
@@ -146,8 +136,57 @@ const Property = () => {
           return (
             <div key={key}>
               <h4>Description: {property.property_description}</h4>
-              <p>Cost: {property.property_cost}</p>
-              <p>Qty: {property.property_quantity}</p>
+              <input
+                type="string"
+                placeholder="Update description..."
+                onChange={(e) => {
+                  setNewDescription(e.target.value);
+                }}
+              />
+              <button
+                onClick={() => {
+                  updateDescription(property._id);
+                }}
+              >
+                Update
+              </button>
+              <h5>Cost: {property.property_cost}</h5>
+              <input
+                type="number"
+                placeholder="Update cost..."
+                onChange={(e) => {
+                  setNewCost(e.target.value);
+                }}
+              />
+              <button
+                onClick={() => {
+                  updateCost(property._id);
+                }}
+              >
+                Update
+              </button>
+              <h5>Qty: {property.property_quantity}</h5>
+              <input
+                type="number"
+                placeholder="Update quantity..."
+                onChange={(e) => {
+                  setNewQuantity(e.target.value);
+                }}
+              />
+              <button
+                onClick={() => {
+                  updateQuantity(property._id);
+                }}
+              >
+                Update
+              </button>
+              <button
+                onClick={() => {
+                  deleteProperty(property._id);
+                }}
+              >
+                Delete
+              </button>
             </div>
           );
         })}

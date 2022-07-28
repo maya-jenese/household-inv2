@@ -81,21 +81,70 @@ router.post("/", async (req, res) => {
 // @route GET api/properties/:id
 // @description Update property
 // @access Public
-router.put("/:id", (req, res) => {
-  Property.findByIdAndUpdate(req.params.id, req.body)
-    .then((property) => res.json({ msg: "Updated successfully" }))
-    .catch((err) =>
-      res.status(400).json({ error: "Unable to update the Database" })
-    );
+router.patch("/update-property/:id", async (req, res) => {
+  const updatedProperty = await Property.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  // User.findByIdAndUpdate(
+  //   req.body.user_id, // need to send user data/token
+  //   {
+  //     $set: {
+  //       properties: [updatedProperty._id],
+  //     },
+  //   },
+  //   function (err, user) {
+  //     if (err) {
+  //       console.log(err);
+  //     } else {
+  //       res.status(500).send({ message: "Property successfully updated" });
+  //     }
+  //   }
+  // );
+
+  try {
+    res.status(200).json({
+      status: "Success",
+      data: {
+        updatedProperty,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "Failed",
+      message: err,
+    });
+  }
+
+  // Property.findByIdAndUpdate(req.params.id, req.body)
+  //   .then((property) => res.json({ msg: "Updated successfully" }))
+  //   .catch((err) =>
+  //     res.status(400).json({ error: "Unable to update the Database" })
+  //   );
 });
 
 // @route GET api/properties/:id
 // @description Delete properties by id
 // @access Public
-router.delete("/:id", (req, res) => {
-  Book.findByIdAndRemove(req.params.id, req.body)
-    .then((book) => res.json({ mgs: "Property entry deleted successfully" }))
-    .catch((err) => res.status(404).json({ error: "No such a book" }));
+router.delete("/delete-property/:id", async (req, res) => {
+  await Property.findByIdAndDelete(req.params.id); // doesn't properly delete from user property database
+
+  try {
+    res.status(204).json({
+      status: "Success",
+      data: {},
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "Failed",
+      message: err,
+    });
+  }
 });
 
 module.exports = router;
