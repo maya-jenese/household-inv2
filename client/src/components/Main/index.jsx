@@ -106,7 +106,7 @@ const Main = () => {
 				</div>
 			</div>
 			<footer>
-				<h1>All rights reserved © copyright 2022, West Boca Make-Believe Retirement Community</h1>
+				<h1>All rights reserved © Copyright 2022, West Boca Make-Believe Retirement Community</h1>
 			</footer>
 		</div>
 	);
