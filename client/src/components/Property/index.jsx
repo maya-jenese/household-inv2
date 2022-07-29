@@ -28,16 +28,6 @@ const Property = () => {
     navigate("/");
   };
 
-  const goToUpdateProperty = () => {
-    navigate("/update-property", {
-      state: {
-        description: getPropertyUserData.property_description,
-        cost: getPropertyUserData.property_cost,
-        quantity: getPropertyUserData.property_quantity,
-      },
-    });
-  };
-
   const handleLogout = () => {
     localStorage.removeItem("token");
     window.location.reload();
@@ -127,9 +117,8 @@ const Property = () => {
     });
   };
 
-  const deleteProperty = (id, email) => {
+  const deleteProperty = (id) => {
     axios.delete(`http://localhost:8080/api/property/delete-property/${id}`);
-    window.location.reload(false);
   };
 
   //Set the page tab title
@@ -176,40 +165,91 @@ const Property = () => {
             Add Property
           </button>
         </div>
+        {properties.map((property, key) => {
+          return (
+            <div id={styles.property_form} key={key}>
+              <h4>Description: {property.property_description}</h4>
+              <input
+                className={styles.input}
+                type="string"
+                placeholder="Update description..."
+                onChange={(e) => {
+                  setNewDescription(e.target.value);
+                }}
+              />
+              <button
+                className={styles.green_btn}
+                onClick={() => {
+                  updateDescription(property._id);
+                }}
+              >
+                Update
+              </button>
+              <h5>Cost: {property.property_cost}</h5>
+              <input
+                className={styles.input}
+                type="number"
+                placeholder="Update cost..."
+                onChange={(e) => {
+                  setNewCost(e.target.value);
+                }}
+              />
+              <button
+                className={styles.green_btn}
+                onClick={() => {
+                  updateCost(property._id);
+                }}
+              >
+                Update
+              </button>
+              <h5>Qty: {property.property_quantity}</h5>
+              <input
+                className={styles.input}
+                type="number"
+                placeholder="Update quantity..."
+                onChange={(e) => {
+                  setNewQuantity(e.target.value);
+                }}
+              />
+              <button
+                className={styles.green_btn}
+                onClick={() => {
+                  updateQuantity(property._id);
+                }}
+              >
+                Update
+              </button>
+              <button
+                className={styles.green_btn}
+                onClick={() => {
+                  deleteProperty(property._id);
+                }}
+              >
+                Delete
+              </button>
+            </div>
+          );
+        })}
+
         <div id={styles.property_table}>
           <table>
             <tbody>
               <tr>
                 <th>Property Name</th>
-                <th>Property Cost ($)</th>
+                <th>Property Cost</th>
                 <th>Property Quantity</th>
               </tr>
               {getPropertyUserData.length ? (
                 getPropertyUserData.map((getPropertyUserData) => (
-                  <>
-                    <tr>
-                      <td>{getPropertyUserData.property_description}</td>
-                      <td>{getPropertyUserData.property_cost}</td>
-                      <td>{getPropertyUserData.property_quantity}</td>
-                    </tr>
-                    <button
-                      className={styles.green_btn}
-                      onClick={goToUpdateProperty}
-                    >
-                      Update
-                    </button>
-                    <button
-                      className={styles.green_btn}
-                      onClick={() => {
-                        deleteProperty(
-                          getPropertyUserData._id,
-                          getPropertyUserData.email
-                        );
-                      }}
-                    >
-                      Delete
-                    </button>
-                  </>
+                  <tr>
+                    <td>{getPropertyUserData.property_description}</td>
+                    <td>{getPropertyUserData.property_cost}</td>
+                    <td>
+                      {getPropertyUserData.property_quantity}
+                      <button className={styles.delete_btn}>Delete</button>
+                      <button className={styles.update_btn}>Update</button>
+                    </td>
+                  </tr>
                 ))
               ) : (
                 <tr>
