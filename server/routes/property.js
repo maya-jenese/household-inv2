@@ -14,14 +14,12 @@ router.get("/test", (req, res) => res.send("property route testing!"));
 // @route GET api/properties
 // @description Get all properties
 // @access Public
-router.get("/get-properties", async (req, res) => {
-  // Property.find()
-  //   .then(properties => res.json(properties))
-  //   .catch(err => res.status(404).json({ message: 'No Properties found' }));
-  //console.log("Here");
+router.get("/get-properties/:id", async (req, res) => {
+  const user = await User.findById(req.params.id);
 
-  const userProperties = await Property.find({});
-  //console.log(userProperties);
+  const userProperties = user.properties;
+  //res.send(user);
+
   try {
     res.status(200).json({
       status: "Success",
@@ -35,16 +33,41 @@ router.get("/get-properties", async (req, res) => {
       message: err,
     });
   }
+  //const userProperties = await Property.find({});
+  //const id = "62d4c322b0dffaa32af430e6";
+  //User.findById(req.params.id, function (err, user) {
+  //userProperties = user.properties;
+  //console.log(userProperties[0]);
+  // try {
+  //   res.status(200).json({
+  //     status: "Success",
+  //     data: {
+  //       userProperties,
+  //     },
+  //   });
+  // } catch (err) {
+  //   res.status(500).json({
+  //     status: "Failed",
+  //     message: err,
+  //   });
+  // }
+  // if (err) {
+  //   console.log(err);
+  // } else {
+  //   console.log("User properties: ", user.properties);
+  //   userProperties = user.properties;
+  // }
+  //});
 });
 
 // @route GET api/books/:id
 // @description Get single book by id
 // @access Public
-router.get("/:id", (req, res) => {
-  Property.findById(req.params.id)
-    .then((property) => res.json(property))
-    .catch((err) => res.status(404).json({ message: "No Property found" }));
-});
+// router.get("/:id", (req, res) => {
+//   Property.findById(req.params.id)
+//     .then((property) => res.json(property))
+//     .catch((err) => res.status(404).json({ message: "No Property found" }));
+// });
 
 // @route GET api/properties
 // @description add/save property

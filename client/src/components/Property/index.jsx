@@ -32,11 +32,12 @@ const Property = () => {
     window.location.reload();
   };
 
-  const [data, setData] = useState("");
+  const [userData, setUserData] = useState({});
 
   // tracks property state w/ 'properties'
   const [properties, setProperties] = useState([
     {
+      user_id: "",
       property_description: "",
       property_cost: 0,
       property_quantity: 0,
@@ -54,14 +55,22 @@ const Property = () => {
       body: JSON.stringify({ token: localStorage.getItem("token") }),
     })
       .then((response) => response.json())
-      .then((data) => setData(data));
+      .then((userData) => setUserData(userData));
   }, []);
 
+  //properties.user_id = userData._id;
+  //   console.log("User ID");
+  //   console.log(properties.user_id);
+
   useEffect(() => {
+    properties.user_id = userData._id;
     axios
-      .get("http://localhost:8080/api/property/get-properties")
+      .get("http://localhost:8080/api/property/get-properties/")
       .then((res) => {
-        setProperties(res.data.data.userProperties);
+        setProperties(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
       });
   }, []);
 
@@ -114,7 +123,7 @@ const Property = () => {
             Profile
           </button>
           <button
-            hidden={!data.isAdmin}
+            hidden={!userData.isAdmin}
             className={styles.white_btn}
             onClick={navigateToAdmin}
           >
