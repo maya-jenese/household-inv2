@@ -63,10 +63,6 @@ const Property = () => {
       .then((userData) => setUserData(userData));
   }, []);
 
-  //properties.user_id = userData._id;
-  //   console.log("User ID");
-  //   console.log(properties.user_id);
-
   let UsersProperty = [];
 
   useEffect(async () => {
@@ -165,72 +161,6 @@ const Property = () => {
             Add Property
           </button>
         </div>
-        {properties.map((property, key) => {
-          return (
-            <div id={styles.property_form} key={key}>
-              <h4>Description: {property.property_description}</h4>
-              <input
-                className={styles.input}
-                type="string"
-                placeholder="Update description..."
-                onChange={(e) => {
-                  setNewDescription(e.target.value);
-                }}
-              />
-              <button
-                className={styles.green_btn}
-                onClick={() => {
-                  updateDescription(property._id);
-                }}
-              >
-                Update
-              </button>
-              <h5>Cost: {property.property_cost}</h5>
-              <input
-                className={styles.input}
-                type="number"
-                placeholder="Update cost..."
-                onChange={(e) => {
-                  setNewCost(e.target.value);
-                }}
-              />
-              <button
-                className={styles.green_btn}
-                onClick={() => {
-                  updateCost(property._id);
-                }}
-              >
-                Update
-              </button>
-              <h5>Qty: {property.property_quantity}</h5>
-              <input
-                className={styles.input}
-                type="number"
-                placeholder="Update quantity..."
-                onChange={(e) => {
-                  setNewQuantity(e.target.value);
-                }}
-              />
-              <button
-                className={styles.green_btn}
-                onClick={() => {
-                  updateQuantity(property._id);
-                }}
-              >
-                Update
-              </button>
-              <button
-                className={styles.green_btn}
-                onClick={() => {
-                  deleteProperty(property._id);
-                }}
-              >
-                Delete
-              </button>
-            </div>
-          );
-        })}
-
         <div id={styles.property_table}>
           <table>
             <tbody>
