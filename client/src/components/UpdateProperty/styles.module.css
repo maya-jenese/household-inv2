@@ -222,3 +222,14 @@ table th {
 	background-color: #049af8;
 	color: white;
 }
+
+select {
+	outline: none;
+	border: none;
+	width: 370px;
+	padding: 15px;
+	border-radius: 10px;
+	background-color: #edf5f3;
+	margin: 5px 0;
+	font-size: 14px;
+}
