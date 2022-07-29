@@ -73,6 +73,48 @@ router.post("/set-user-password", async (req, res) => {
 	}
 });
 
+router.post("/add-authorized-user", async (req, res) => {
+	if (req.body.user_email === req.body.email_to_add)
+		return res.status(500).send({ message: "Emails are the same."});
+
+	const authorized_user = await User.findOne({email: req.body.email_to_add});
+
+	User.findOneAndUpdate(
+		{email: req.body.user_email},
+		{
+			$addToSet: { users_authorized: authorized_user}
+		},
+		function(err, user) {
+			if (err) {
+				console.log(err)
+			} else {
+				res.status(500).send({ message: "User has been authorized or user is already authorized." });
+				console.log("Authorized user added or already exists in authorized users.");
+			}
+		})
+});
+
+router.post("/remove-authorized-user", async (req, res) => {
+	const authorized_user_to_remove = await User.findOne({email: req.body.email_to_remove});
+
+	if (authorized_user_to_remove !== null) {
+		User.findOneAndUpdate(
+			{email: req.body.user_email},
+			{
+				$pull: {users_authorized: authorized_user_to_remove._id}
+			},
+			function (err, user) {
+				if (err) {
+					console.log(err)
+				} else {
+					res.status(500).send({message: "User has been removed as a authorized user."});
+				}
+			})
+	} else {
+		res.status(500).send({message: "Invalid email. Try again with a different email."});
+	}
+});
+
 const validate = (data) => {
 	const schema = Joi.object({
 		new_password: passwordComplexity().required().label("New Password"),
