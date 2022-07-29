@@ -47,6 +47,42 @@ html {
     transition: background-color 0.5s ease;
 }
 
+.green_btn {
+    display:inline-block;
+    border: none;
+    outline: none;
+    padding: 12px 0;
+    border-radius: 20px;
+    width: 180px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #049af8;
+    color: white;
+    margin: 10px;
+}
+
+.input {
+    outline: none;
+    border: none;
+    width: 370px;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #edf5f3;
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.green_btn:hover {
+    background-color: #157dbd;
+    transition: background-color 0.5s ease;
+}
+
+.green_btn:active {
+    background-color: #049af8;
+    transition: background-color 0.5s ease;
+}
+
 #logo {
     width: 125px;
     margin-left: 25px;
@@ -60,6 +96,26 @@ html {
 }
 
 .property_list h2 {
+    margin-left: 100px;
+}
+
+#property_table {
+    margin-left: 100px;
+    margin-right: 100px;
+}
+
+#property_form {
+    margin-left: 100px;
+    margin-bottom: 25px;
+}
+
+#add_property_header {
+    display: flex;
+}
+
+#add_property_header button {
+    margin-top: 25px;
+    margin-bottom: 25px;
     margin-left: 100px;
 }
 
