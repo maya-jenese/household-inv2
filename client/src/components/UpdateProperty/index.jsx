@@ -6,7 +6,7 @@ import axios from "axios";
 
 function UpdateProperty() {
   const { state } = useLocation();
-  const { id, description, cost, quantity } = state;
+  const { description, cost, quantity } = state;
 
   const navigate = useNavigate();
 
@@ -118,6 +118,8 @@ function UpdateProperty() {
         <div className={styles.row}>
           <div className={styles.columns}>
             <form className={styles.form_container} onSubmit={updateDetails}>
+              {" "}
+              {/* updateDetails NEEDS TO BE FIXED */}
               <h1>Edit Property</h1>
               <h3>Property Description</h3>
               <input

@@ -49,9 +49,15 @@ const Property = () => {
     },
   ]);
 
-  const [newDescription, setNewDescription] = useState("");
-  const [newCost, setNewCost] = useState(0);
-  const [newQuantity, setNewQuantity] = useState(0);
+  const goToUpdateProperty = () => {
+    navigate("/update-property", {
+      state: {
+        description: getPropertyUserData.property_description,
+        cost: getPropertyUserData.property_cost,
+        quantity: getPropertyUserData.property_quantity,
+      },
+    });
+  };
 
   useEffect(() => {
     fetch("http://localhost:8080/api/users/getuserinfo", {
@@ -89,29 +95,6 @@ const Property = () => {
       }
     }
   }, [userData.email]);
-
-  // Update property description
-  const updateDescription = (id) => {
-    axios.put("http://localhost:8080/api/property/update-property", {
-      id,
-      newDescription,
-    });
-  };
-
-  // Update property cost
-  const updateCost = (id) => {
-    axios.put("http://localhost:8080/api/property/update-property", {
-      id,
-      newCost,
-    });
-  };
-
-  const updateQuantity = (id) => {
-    axios.put("http://localhost:8080/api/property/update-property", {
-      id,
-      newQuantity,
-    });
-  };
 
   const deleteProperty = (id) => {
     axios.delete(`http://localhost:8080/api/property/delete-property/${id}`);
@@ -176,8 +159,18 @@ const Property = () => {
                     <td>{getPropertyUserData.property_cost}</td>
                     <td>
                       {getPropertyUserData.property_quantity}
-                      <button className={styles.delete_btn}>Delete</button>
-                      <button className={styles.update_btn}>Update</button>
+                      <button
+                        className={styles.delete_btn}
+                        onClick={deleteProperty(getPropertyUserData.id)}
+                      >
+                        Delete
+                      </button>
+                      <button
+                        className={styles.update_btn}
+                        onClick={goToUpdateProperty}
+                      >
+                        Update
+                      </button>
                     </td>
                   </tr>
                 ))
