@@ -240,7 +240,7 @@ const Property = () => {
 								<tr>
 									<td>{getPropertyUserData.property_description}</td>
 									<td>{getPropertyUserData.property_cost}</td>
-									<td>{getPropertyUserData.property_quantity}</td>
+									<td>{getPropertyUserData.property_quantity}<button className={styles.delete_btn}>Delete</button><button className={styles.update_btn}>Update</button></td>
 								</tr>
 							))
 							:
