@@ -80,8 +80,7 @@ html {
     transition: background-color 0.5s ease;
 }
 
-table tr td .delete_btn, table tr td .update_btn  {
-    margin-right: 5px;
+table tr .delete_btn, table tr .update_btn  {
     border: none;
     outline: none;
     border-radius: 20px;
@@ -93,8 +92,7 @@ table tr td .delete_btn, table tr td .update_btn  {
     float:right;
 }
 
-table tr td:hover .delete_btn, table tr td:hover .update_btn {
-    margin-right: 5px;
+table tr:hover .delete_btn, table tr:hover .update_btn {
     border: none;
     outline: none;
     border-radius: 20px;
