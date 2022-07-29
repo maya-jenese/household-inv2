@@ -6,7 +6,6 @@ const connection = require("./db");
 const userRoutes = require("./routes/users");
 const authRoutes = require("./routes/auth");
 const updateProfileRoutes = require("./routes/updateprofile");
-const adminRoutes = require("./routes/admin");
 const addPropertyRoutes = require("./routes/property");
 
 
@@ -22,7 +21,6 @@ app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/updateprofile", updateProfileRoutes);
 app.use("/api/property", addPropertyRoutes);
-app.use("/admin", adminRoutes)
 
 app.get('/', (req, res) => {
     res.send('Welcome to CORS server 😁')

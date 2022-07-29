@@ -59,8 +59,8 @@ const Property = () => {
       method: "POST",
       body: JSON.stringify({ token: localStorage.getItem("token") }),
     })
-        .then((response) => response.json())
-        .then((data) => setData(data));
+      .then((response) => response.json())
+      .then((data) => setData(data));
   }, []);
 
   // Gets user data
@@ -76,10 +76,10 @@ const Property = () => {
 
   useEffect(() => {
     axios
-        .get("http://localhost:8080/api/property/get-properties")
-        .then((res) => {
-          setProperties(res.data.data.userProperties);
-        });
+      .get("http://localhost:8080/api/property/get-properties")
+      .then((res) => {
+        setProperties(res.data.data.userProperties);
+      });
 
     // axios.get('http://localhost:8080/property')
     // 	.then(res => res.json())
@@ -105,60 +105,60 @@ const Property = () => {
   //Set the page tab title
   useEffect(() => {
     document.title =
-        "Your Property - West Boca Make-Believe Retirement Community";
+      "Your Property - West Boca Make-Believe Retirement Community";
   });
 
   return (
-      <div className={styles.main_container}>
-        <nav className={styles.navbar}>
-          <img id={styles.logo} src={logo} />
-          <h1>West Boca Make-Believe Retirement Community</h1>
-          <div className={styles.buttons}>
-            <button className={styles.white_btn} onClick={navigateHome}>
-              Home
-            </button>
-            <button className={styles.white_btn} onClick={navigateToProperty}>
-              Property
-            </button>
-            <button className={styles.white_btn} onClick={navigateToProfile}>
-              Profile
-            </button>
-            <button
-                hidden={!data.isAdmin}
-                className={styles.white_btn}
-                onClick={navigateToAdmin}
-            >
-              Admin
-            </button>
-            <button
-                className={styles.white_btn}
-                id={styles.red_hover}
-                onClick={handleLogout}
-            >
-              Logout
-            </button>
-          </div>
-        </nav>
-        <div className={styles.property_list}>
-          <h2>My Properties</h2>
-          <button onClick={navigateToAddProperty}>Add Property</button>
-          {properties.map((property, key) => {
-            return (
-                <div key={key}>
-                  <h4>Description: {property.property_description}</h4>
-                  <p>Cost: {property.property_cost}</p>
-                  <p>Qty: {property.property_quantity}</p>
-                </div>
-            );
-          })}
+    <div className={styles.main_container}>
+      <nav className={styles.navbar}>
+        <img id={styles.logo} src={logo} />
+        <h1>West Boca Make-Believe Retirement Community</h1>
+        <div className={styles.buttons}>
+          <button className={styles.white_btn} onClick={navigateHome}>
+            Home
+          </button>
+          <button className={styles.white_btn} onClick={navigateToProperty}>
+            Property
+          </button>
+          <button className={styles.white_btn} onClick={navigateToProfile}>
+            Profile
+          </button>
+          <button
+            hidden={!data.isAdmin}
+            className={styles.white_btn}
+            onClick={navigateToAdmin}
+          >
+            Admin
+          </button>
+          <button
+            className={styles.white_btn}
+            id={styles.red_hover}
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
         </div>
-        <footer>
-          <h1>
-            All rights reserved © copyright 2022, West Boca Make-Believe
-            Retirement Community
-          </h1>
-        </footer>
+      </nav>
+      <div className={styles.property_list}>
+        <h2>My Properties</h2>
+        <button onClick={navigateToAddProperty}>Add Property</button>
+        {properties.map((property, key) => {
+          return (
+            <div key={key}>
+              <h4>Description: {property.property_description}</h4>
+              <p>Cost: {property.property_cost}</p>
+              <p>Qty: {property.property_quantity}</p>
+            </div>
+          );
+        })}
       </div>
+      <footer>
+        <h1>
+          All rights reserved © copyright 2022, West Boca Make-Believe
+          Retirement Community
+        </h1>
+      </footer>
+    </div>
   );
 };
 
