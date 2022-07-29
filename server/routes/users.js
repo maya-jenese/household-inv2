@@ -32,7 +32,7 @@ router.post("/getuserinfo", async (req, res) => {
       req.body.token,
       `${process.env.JWTPRIVATEKEY}`
     );
-    console.log(tokenContents);
+    //console.log(tokenContents);
 
     const userInfo = await User.findOne({ _id: tokenContents._id });
     //console.log(userInfo);

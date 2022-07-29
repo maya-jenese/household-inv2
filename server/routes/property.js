@@ -16,15 +16,22 @@ router.get("/test", (req, res) => res.send("property route testing!"));
 // @access Public
 router.post("/get-properties/", async (req, res) => {
   //Grab the property IDs from the array
-  const user_to_get_properties_from = await User.find({email: req.body.email}).select('properties').lean();
-  console.log(user_to_get_properties_from);
+  const user_to_get_properties_from = await User.find({ email: req.body.email })
+    .select("properties")
+    .lean();
+  //console.log("USER TO GET PROPERTY FROM");
+  //console.log(user_to_get_properties_from);
   const property_array = user_to_get_properties_from[0].properties;
-  console.log(property_array);
+  //console.log("\nPROPERTY ARRAY");
+  //console.log(property_array);
 
   //Populate property_array with property info based on the unique ids from above
-  console.log("PROPERTIES FOR ACCOUNT: ");
-  const properties_for_user_details = await Property.find().where('_id').in(property_array).exec();
-  console.log(properties_for_user_details);
+  //console.log("PROPERTIES FOR ACCOUNT: ");
+  const properties_for_user_details = await Property.find({})
+    .where("_id")
+    .in(property_array)
+    .exec();
+  //console.log(properties_for_user_details);
 
   //Send array of properties to render client-side
   res.json(properties_for_user_details);
@@ -110,6 +117,23 @@ router.patch("/update-property/:id", async (req, res) => {
     }
   );
 
+  //Grab the property IDs from the array
+  // const user_to_get_properties_from = await User.find({ email: req.body.email })
+  //   .select("properties")
+  //   .lean();
+  // console.log("USER TO GET PROPERTY FROM");
+  // console.log(user_to_get_properties_from);
+  // const property_array = user_to_get_properties_from[0].properties;
+
+  // const properties_for_user_details = await Property.find({})
+  //   .where("_id")
+  //   .in(property_array)
+  //   .exec();
+  //console.log(properties_for_user_details);
+
+  //Send array of properties to render client-side
+  //res.json(properties_for_user_details);
+
   // User.findByIdAndUpdate(
   //   req.body.user_id, // need to send user data/token
   //   {
@@ -151,6 +175,9 @@ router.patch("/update-property/:id", async (req, res) => {
 // @description Delete properties by id
 // @access Public
 router.delete("/delete-property/:id", async (req, res) => {
+  // await User.findByIdAndUpdate(req.data, {
+  //   $pull: { properties: { _id: req.params.id } },
+  // });
   await Property.findByIdAndDelete(req.params.id); // doesn't properly delete from user property database
 
   try {
