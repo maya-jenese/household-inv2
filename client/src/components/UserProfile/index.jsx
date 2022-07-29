@@ -4,7 +4,6 @@ import {useNavigate} from "react-router-dom";
 import logo from '../../logo_normal.png';
 import axios from "axios";
 
-
 const UserProfile = () => {
     const [data, setData] = useState({
         email: "",
@@ -12,10 +11,17 @@ const UserProfile = () => {
         lastName: ""
     });
 
+    const [authorizedUsers, setAuthorizedUsers] = useState({} );
+
     const [password_data, setPasswordData] = useState({
         current_password: "",
         new_password: "",
         new_password_confirm: ""
+    });
+
+    const [authorizedEmail, setAuthorizedEmail] = useState({
+        email: "",
+        authorized_email: ""
     });
 
     const [error, setError] = useState("");
@@ -28,6 +34,10 @@ const UserProfile = () => {
         setPasswordData({ ...password_data, [input.name]: input.value });
     };
 
+    const handleSetAuthorizedEmail = ({ currentTarget: input }) => {
+        authorizedEmail.email = data.email;
+        setAuthorizedEmail({ ...authorizedEmail, [input.name]: input.value });
+    };
 
     const navigate = useNavigate()
 
@@ -58,15 +68,64 @@ const UserProfile = () => {
             method: "POST",
             body: JSON.stringify({token: localStorage.getItem("token")})
         }).then(response => response.json()).then(data => setData(data));
-    }, []);
 
-    useEffect(() => {
         fetch("http://localhost:8080/api/users/getuserinfo", {
             headers: {"Content-Type": "application/json"},
             method: "POST",
             body: JSON.stringify({token: localStorage.getItem("token")})
         }).then(response => response.json()).then(password_data => setPasswordData(password_data));
     }, []);
+
+    let authUsers = [];
+
+    useEffect(async () => {
+            if (data.email !== "") {
+                authorizedEmail.email = data.email
+                try {
+                    console.log(authorizedEmail.email);
+                    const url = "http://localhost:8080/api/updateprofile/get-authorized-users";
+                    const {authorizedUsers: res} = await axios.post(url, authorizedEmail)
+                        .then((response) => {
+                            authUsers = response.data;
+                            console.log(authUsers);
+                            setAuthorizedUsers(response.data);
+                        })
+                } catch (error) {
+                    if (
+                        error.response &&
+                        error.response.status >= 400 &&
+                        error.response.status <= 500
+                    ) {
+                        setError(error.response.data.message);
+                    }
+                }
+            }
+    }, [data.email]);
+
+    async function GetAuthUserManually() {
+        if (data.email !== "") {
+            authorizedEmail.email = data.email
+            try {
+                console.log("Called");
+                console.log(authorizedEmail.email);
+                const url = "http://localhost:8080/api/updateprofile/get-authorized-users";
+                const {authorizedUsers: res} = await axios.post(url, authorizedEmail)
+                    .then((response) => {
+                        authUsers = response.data;
+                        console.log(authUsers);
+                        setAuthorizedUsers(response.data);
+                    })
+            } catch (error) {
+                if (
+                    error.response &&
+                    error.response.status >= 400 &&
+                    error.response.status <= 500
+                ) {
+                    setError(error.response.data.message);
+                }
+            }
+        }
+    }
 
     const updateDetails = async (e) => {
         e.preventDefault();
@@ -99,6 +158,50 @@ const UserProfile = () => {
                 error.response.status >= 400 &&
                 error.response.status <= 500
             ) {
+                setError(error.response.data.message);
+            }
+        }
+    };
+
+    const addAuthorizedUser = async (e) => {
+        e.preventDefault();
+        try {
+            console.log(authorizedEmail);
+            const url = "http://localhost:8080/api/updateprofile/add-authorized-user";
+            const { data: res } = await axios.post(url, authorizedEmail).then((response) => {
+                console.log(response);
+                GetAuthUserManually();
+            });
+            console.log(res.message);
+        } catch (error) {
+            if (
+                error.response &&
+                error.response.status >= 400 &&
+                error.response.status <= 500
+            ) {
+                await GetAuthUserManually();
+                setError(error.response.data.message);
+            }
+        }
+    };
+
+    const removeAuthorizedUser = async (e) => {
+        e.preventDefault();
+        try {
+            console.log(authorizedEmail);
+            const url = "http://localhost:8080/api/updateprofile/remove-authorized-user";
+            const { data: res } = await axios.post(url, authorizedEmail).then((response) => {
+                console.log(response);
+                GetAuthUserManually();
+            });
+            console.log(res.message);
+        } catch (error) {
+            if (
+                error.response &&
+                error.response.status >= 400 &&
+                error.response.status <= 500
+            ) {
+                await GetAuthUserManually();
                 setError(error.response.data.message);
             }
         }
@@ -203,40 +306,73 @@ const UserProfile = () => {
                                 required
                                 className={styles.input}
                             />
-                            {error && <div className={styles.message}>{error}</div>}
                             <button type="submit" className={styles.green_btn}>
                                 Update Password
                             </button>
                         </form>
                     </div>
+                    <div className={styles.columns}>
+                        <form className={styles.form_container} onSubmit={addAuthorizedUser}>
+                            <h1>Add Authorized User</h1>
+                            <h3>Authorized User's Email</h3>
+                            <input
+                                type="email"
+                                placeholder="Authorized User's Email"
+                                name="authorized_email"
+                                onChange={handleSetAuthorizedEmail}
+                                required
+                                className={styles.input}
+                            />
+                            <button type="submit" className={styles.green_btn}>
+                                Add Authorized User
+                            </button>
+                        </form>
+                        <form className={styles.form_container} onSubmit={removeAuthorizedUser}>
+                            <h1>Remove Authorized User</h1>
+                            <h3>Authorized User's Email</h3>
+                            <input
+                                type="email"
+                                placeholder="Authorized User's Email"
+                                name="authorized_email"
+                                onChange={handleSetAuthorizedEmail}
+                                required
+                                className={styles.input}
+                            />
+                            <button type="submit" className={styles.red_btn}>
+                                Remove Authorized User
+                            </button>
+                        </form>
+                    </div>
                 </div>
-
+                {error && <div className={styles.message}>{error}</div>}
                 <div id={styles.add_user}>
                     <h1 id={styles.section_text}>Authorized Users</h1>
-                    <button type="submit" className={styles.green_btn}>
-                        + Add User
-                    </button>
-                    <button type="submit" className={styles.red_btn}>
-                        - Remove User
-                    </button>
                 </div>
                 <div id={styles.current_users}>
                     <table>
+                        <tbody>
                         <tr>
                             <th>First Name</th>
                             <th>Last Name</th>
                             <th>Email</th>
                         </tr>
-                        <tr>
-                            <td>Alex</td>
-                            <td>Smith</td>
-                            <td>alex.smith@gmail.com</td>
-                        </tr>
-                        <tr>
-                            <td>John</td>
-                            <td>Doe</td>
-                            <td>john.doe@gmail.com</td>
-                        </tr>
+                        {authorizedUsers.length ?
+                            authorizedUsers.map(authorizedUsers => (
+                                <tr>
+                                    <td>{authorizedUsers.firstName}</td>
+                                    <td>{authorizedUsers.lastName}</td>
+                                    <td>{authorizedUsers.email}</td>
+                                </tr>
+                            ))
+                            :
+                            (<tr>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>)
+                        }
+                        </tbody>
                     </table>
                 </div>
             </div>
