@@ -14,25 +14,21 @@ router.get("/test", (req, res) => res.send("property route testing!"));
 // @route GET api/properties
 // @description Get all properties
 // @access Public
-router.get("/get-properties/:id", async (req, res) => {
-  const user = await User.findById(req.params.id);
+router.post("/get-properties/", async (req, res) => {
+  //Grab the property IDs from the array
+  const user_to_get_properties_from = await User.find({email: req.body.email}).select('properties').lean();
+  console.log(user_to_get_properties_from);
+  const property_array = user_to_get_properties_from[0].properties;
+  console.log(property_array);
 
-  const userProperties = user.properties;
-  //res.send(user);
+  //Populate property_array with property info based on the unique ids from above
+  console.log("PROPERTIES FOR ACCOUNT: ");
+  const properties_for_user_details = await Property.find().where('_id').in(property_array).exec();
+  console.log(properties_for_user_details);
 
-  try {
-    res.status(200).json({
-      status: "Success",
-      data: {
-        userProperties,
-      },
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: "Failed",
-      message: err,
-    });
-  }
+  //Send array of properties to render client-side
+  res.json(properties_for_user_details);
+
   //const userProperties = await Property.find({});
   //const id = "62d4c322b0dffaa32af430e6";
   //User.findById(req.params.id, function (err, user) {
