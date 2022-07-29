@@ -5,6 +5,7 @@ const Joi = require("joi");
 const router = express.Router();
 const passwordComplexity = require("joi-password-complexity");
 const jwt = require("jsonwebtoken");
+const {json} = require("express");
 
 router.post("/", async (req, res) => {
 	User.findByIdAndUpdate(
@@ -90,9 +91,39 @@ router.post("/add-authorized-user", async (req, res) => {
 		})
 });
 
+router.post("/remove-authorized-user", async (req, res) => {
+	const authorized_user_to_remove = await User.findOne({email: req.body.authorized_email});
+
+	if (authorized_user_to_remove !== null) {
+		User.findOneAndUpdate(
+			{email: req.body.email},
+			{
+				$pull: {users_authorized: authorized_user_to_remove._id}
+			},
+			function (err, user) {
+				if (err) {
+					console.log(err)
+				} else {
+					res.status(500).send({message: "User has been removed as a authorized user."});
+				}
+			})
+	} else {
+		res.status(500).send({message: "Invalid email. Try again with a different email."});
+	}
+});
+
 router.post("/get-authorized-users", async (req, res) => {
-	const authorized_users_ids = await User.find({email: req.body.email}).select('users_authorized');
-	console.log(authorized_users_ids);
+	//Grab all the authorized users IDs from the array
+	const authorized_users_ids = await User.find({email: req.body.email}).select('users_authorized').lean();
+	const authorized_users_ids_arr = authorized_users_ids[0].users_authorized;
+
+	//Populate authorized_users_details with user info based on ID from above
+	console.log("AUTHORIZED USERS FOR ACCOUNT: ");
+	const authorized_users_details = await User.find().where('_id').in(authorized_users_ids_arr).exec();
+	console.log(authorized_users_details);
+
+	//Send array of users to client-side
+	res.json(authorized_users_details);
 });
 
 const validate = (data) => {
