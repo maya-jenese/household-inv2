@@ -6,7 +6,7 @@ import axios from "axios";
 
 function UpdateProperty() {
   const { state } = useLocation();
-  const { description, cost, quantity } = state;
+  const { id, description, cost, quantity } = state;
 
   const navigate = useNavigate();
 
@@ -16,10 +16,6 @@ function UpdateProperty() {
 
   const navigateToProperty = () => {
     navigate("/property");
-  };
-
-  const navigateToAddProperty = () => {
-    navigate("/add-property");
   };
 
   const navigateToAdmin = () => {
@@ -72,7 +68,7 @@ function UpdateProperty() {
     e.preventDefault();
     try {
       console.log(data);
-      const url = "http://localhost:8080/api/updateprofile";
+      const url = "http://localhost:8080/api/update-property";
       const { data: res } = await axios.post(url, data);
       console.log(res.message);
     } catch (error) {
