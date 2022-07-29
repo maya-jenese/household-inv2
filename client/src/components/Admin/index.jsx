@@ -6,18 +6,44 @@ import axios from "axios";
 
 
 const Admin = () => {
-	const [data, setData] = useState({
-		email: "",
-		firstName: "",
-		lastName: ""
+	const [data, setData] = useState("");
+	//Storing User Data
+	const [userData, setUserData] = useState([]);
+
+	//Setting User Data and sending to Database
+	const [newUserData, setNewUserData] = useState({
+		old_email: ""
 	});
+
+	const handleNewUserData = ({ currentTarget: input }) => {
+		newUserData.old_email = userData.email;
+		setNewUserData({ ...newUserData, [input.name]: input.value });
+	};
+
+	//Getting User Data
+	const [userEmailLookup, setUserEmailLookup] = useState({
+		email: ""
+	});
+
+	//User Password Changes
+	const [password_data, setPasswordData] = useState({
+		email: "",
+		new_password: "",
+		new_password_confirm: ""
+	});
+
+	const handlePasswordChange = ({ currentTarget: input }) => {
+		password_data.email = userData.email;
+		setPasswordData({ ...password_data, [input.name]: input.value });
+	};
+
+	const handleEmailLookup = ({ currentTarget: input }) => {
+		setUserEmailLookup({ ...userEmailLookup, [input.name]: input.value });
+	};
 
 
 	const [error, setError] = useState("");
-
-	const handleChange = ({ currentTarget: input }) => {
-		setData({ ...data, [input.name]: input.value });
-	};
+	const [errorUser, setErrorUser] = useState("");
 
 	const navigate = useNavigate()
 
@@ -50,12 +76,50 @@ const Admin = () => {
 		}).then(response => response.json()).then(data => setData(data));
 	}, []);
 
-	const updateDetails = async (e) => {
+	const setNewUserDetails = async (e) => {
 		e.preventDefault();
 		try {
-			console.log(data);
-			const url = "http://localhost:8080/api/updateprofile";
-			const { data: res } = await axios.post(url, data);
+			console.log(newUserData);
+			const url = "http://localhost:8080/admin/set-user-details";
+			const { data: res } = await axios.post(url, newUserData);
+			console.log(res.message);
+		} catch (error) {
+			if (
+				error.response &&
+				error.response.status >= 400 &&
+				error.response.status <= 500
+			) {
+				setError(error.response.data.message);
+			}
+		}
+	};
+
+	const getUserData = async (e) => {
+		e.preventDefault();
+		try {
+			const url = "http://localhost:8080/admin/get-user";
+			const {userData: res} = axios.post(url, userEmailLookup).then(function (response)
+			{
+				setUserData(response.data);
+				console.log(userData);
+			});
+		} catch (error) {
+			if (
+				error.response &&
+				error.response.status >= 400 &&
+				error.response.status <= 500
+			) {
+				setError(error.response.data.message);
+			}
+		}
+	};
+
+	const updatePassword = async (e) => {
+		e.preventDefault();
+		try {
+			console.log(password_data);
+			const url = "http://localhost:8080/admin/set-user-password";
+			const { data: res } = await axios.post(url, password_data);
 			console.log(res.message);
 		} catch (error) {
 			if (
@@ -98,65 +162,69 @@ const Admin = () => {
 			</nav>
 			<div id={styles.profile_area}>
 				<h1 id={styles.header}>Admin Control Panel</h1>
-				<h1 id={styles.section_text}>Modify User Account</h1>
+				<h1 id={styles.section_text}>Lookup & Modify User's Account</h1>
 				<div className={styles.row}>
 					<div className={styles.columns}>
-						<form className={styles.form_container} onSubmit={updateDetails}>
-							<h1>User's Current Email</h1>
+						<form className={styles.form_container} onSubmit={getUserData}>
+							<h1 className={styles.form_section}>User's Current Email</h1>
 							<input
 								type="text"
-								placeholder="First Name"
-								name="firstName"
-								value={data.email}
+								placeholder="User's Email"
+								name="email"
+								onChange={handleEmailLookup}
 								required
 								className={styles.input}
 							/>
 							<button type="submit" className={styles.green_btn}>
 								Lookup Account
 							</button>
-							<h1>Modify User's Information</h1>
-							<h3>First Name</h3>
+						</form>
+						<form className={styles.form_container} onSubmit={setNewUserDetails}>
+							<h1 className={styles.form_section}>Modify User's Information</h1>
+							<h3>User's First Name</h3>
 							<input
 								type="text"
-								placeholder="First Name"
+								placeholder="User's First Name"
 								name="firstName"
-								onChange={handleChange}
-								value={data.firstName}
+								onChange={handleNewUserData}
+								defaultValue={userData.firstName}
 								required
 								className={styles.input}
 							/>
-							<h3>Last Name</h3>
+							<h3>User's Last Name</h3>
 							<input
 								type="text"
-								placeholder="Last Name"
+								placeholder="User's Last Name"
 								name="lastName"
-								onChange={handleChange}
-								value={data.lastName}
+								defaultValue={userData.lastName}
+								onChange={handleNewUserData}
 								required
 								className={styles.input}
 							/>
-							<h3>Email</h3>
+							<h3>User's Email</h3>
 							<input
 								type="email"
-								placeholder="Email"
+								placeholder="User's Email"
 								name="email"
-								onChange={handleChange}
-								value={data.email}
+								defaultValue={userData.email}
+								onChange={handleNewUserData}
 								required
 								className={styles.input}
 							/>
 							<button type="submit" className={styles.green_btn}>
 								Update Profile
 							</button>
+							{error && <div className={styles.message}>{error}</div>}
 						</form>
 					</div>
-					<form id={styles.below} className={styles.form_container}>
-						<h1>Change User's Password</h1>
+					<form id={styles.below} className={styles.form_container} onSubmit={updatePassword}>
+						<h1 className={styles.form_section}>Change User's Password</h1>
 						<h3>New Password</h3>
 						<input
 							type="password"
 							placeholder="New Password"
 							name="new_password"
+							onChange={handlePasswordChange}
 							required
 							className={styles.input}
 						/>
@@ -165,10 +233,10 @@ const Admin = () => {
 							type="password"
 							placeholder="Confirm New Password"
 							name="new_password_confirm"
+							onChange={handlePasswordChange}
 							required
 							className={styles.input}
 						/>
-						{error && <div className={styles.message}>{error}</div>}
 						<button type="submit" className={styles.green_btn}>
 							Update Password
 						</button>

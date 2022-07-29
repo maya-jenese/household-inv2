@@ -11,7 +11,7 @@ html {
 }
 
 #profile_area {
-	height: 805px;
+	height: 905px;
 }
 
 .navbar {
@@ -163,13 +163,23 @@ table {
 
 .message {
 	width: 370px;
+	margin: auto auto;
+	height: 10%;
 	padding: 15px;
-	margin: 5px 0;
 	font-size: 14px;
 	background-color: #464646;
 	color: white;
 	border-radius: 5px;
 	text-align: center;
+}
+
+.form_section {
+	background-color: #d34141;
+	color: white;
+	border-radius: 8px;
+	text-align: center;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 
 table td, table th {
