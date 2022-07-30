@@ -15,9 +15,24 @@ const Admin = () => {
 		old_email: ""
 	});
 
+	//User tables
+	const [getPropertyUserData, setPropertyUserData] = useState({});
+	const [authorizedUsers, setAuthorizedUsers] = useState({} );
+
+	const [authorizedUserChanges, setAuthorizedUserChanges] = useState({} );
+
 	const handleNewUserData = ({ currentTarget: input }) => {
 		newUserData.old_email = userData.email;
 		setNewUserData({ ...newUserData, [input.name]: input.value });
+	};
+
+	const handleAuthorizedUserUpdates = ({ currentTarget: input }) => {
+		authorizedUserChanges.user_email = userEmailLookup.email;
+		setAuthorizedUserChanges({ ...authorizedUserChanges, [input.name]: input.value });
+	};
+
+	const handleAuthorizedUserChanges = ({ currentTarget: input }) => {
+		setAuthorizedUsers({ ...authorizedUsers, [input.name]: input.value });
 	};
 
 	//Getting User Data
@@ -112,6 +127,101 @@ const Admin = () => {
 				setError(error.response.data.message);
 			}
 		}
+
+		GetAuthUserManually();
+		GetPropertysManually();
+	};
+
+	let authUsers = [];
+
+	async function GetAuthUserManually() {
+		if (userEmailLookup.email !== "") {
+			try {
+				console.log("Called");
+				console.log(userEmailLookup.email);
+				const url = "http://localhost:8080/api/updateprofile/get-authorized-users";
+				const {authorizedUsers: res} = await axios.post(url, userEmailLookup)
+					.then((response) => {
+						authUsers = response.data;
+						console.log(authUsers);
+						setAuthorizedUsers(response.data);
+					})
+			} catch (error) {
+				if (
+					error.response &&
+					error.response.status >= 400 &&
+					error.response.status <= 500
+				) {
+					setError(error.response.data.message);
+				}
+			}
+		}
+	}
+
+	let UsersProperty = [];
+
+	async function GetPropertysManually() {
+		try {
+			const url = "http://localhost:8080/api/property/get-properties/";
+			const {userProperties: res} = await axios.post(url, userEmailLookup)
+				.then((response) => {
+					UsersProperty = response.data;
+					console.log(UsersProperty);
+					setPropertyUserData(response.data);
+				})
+		} catch (error) {
+			if (
+				error.response &&
+				error.response.status >= 400 &&
+				error.response.status <= 500
+			) {
+				setError(error.response.data.message);
+			}
+		}
+	}
+
+	const addAuthorizedUser = async (e) => {
+		e.preventDefault();
+		try {
+			console.log(authorizedUserChanges);
+			const url = "http://localhost:8080/admin/add-authorized-user";
+			const { data: res } = await axios.post(url, authorizedUserChanges).then((response) => {
+				console.log(response);
+				GetAuthUserManually();
+			});
+			console.log(res.message);
+		} catch (error) {
+			if (
+				error.response &&
+				error.response.status >= 400 &&
+				error.response.status <= 500
+			) {
+				await GetAuthUserManually();
+				setError(error.response.data.message);
+			}
+		}
+	};
+
+	const removeAuthorizedUser = async (e) => {
+		e.preventDefault();
+		try {
+			console.log(authorizedUserChanges);
+			const url = "http://localhost:8080/admin/remove-authorized-user";
+			const { data: res } = await axios.post(url, authorizedUserChanges).then((response) => {
+				console.log(response);
+				GetAuthUserManually();
+			});
+			console.log(res.message);
+		} catch (error) {
+			if (
+				error.response &&
+				error.response.status >= 400 &&
+				error.response.status <= 500
+			) {
+				await GetAuthUserManually();
+				setError(error.response.data.message);
+			}
+		}
 	};
 
 	const updatePassword = async (e) => {
@@ -162,7 +272,10 @@ const Admin = () => {
 			</nav>
 			<div id={styles.profile_area}>
 				<h1 id={styles.header}>Admin Control Panel</h1>
-				<h1 id={styles.section_text}>Lookup & Modify User's Account</h1>
+				{error && <div className={styles.message}>{error}</div>}
+				<div id={styles.section_text_first}>
+					<h1 className={styles.section_text}>Lookup & Modify User's Account</h1>
+				</div>
 				<div className={styles.row}>
 					<div className={styles.columns}>
 						<form className={styles.form_container} onSubmit={getUserData}>
@@ -175,7 +288,7 @@ const Admin = () => {
 								required
 								className={styles.input}
 							/>
-							<button type="submit" className={styles.green_btn}>
+							<button type="submit" className={styles.red_btn}>
 								Lookup Account
 							</button>
 						</form>
@@ -211,10 +324,9 @@ const Admin = () => {
 								required
 								className={styles.input}
 							/>
-							<button type="submit" className={styles.green_btn}>
+							<button type="submit" className={styles.red_btn}>
 								Update Profile
 							</button>
-							{error && <div className={styles.message}>{error}</div>}
 						</form>
 					</div>
 					<form id={styles.below} className={styles.form_container} onSubmit={updatePassword}>
@@ -237,10 +349,94 @@ const Admin = () => {
 							required
 							className={styles.input}
 						/>
-						<button type="submit" className={styles.green_btn}>
+						<button type="submit" className={styles.red_btn}>
 							Update Password
 						</button>
 					</form>
+				</div>
+				<div className={styles.row}>
+					<form className={styles.form_container_authorized_users} onSubmit={addAuthorizedUser}>
+						<h1 className={styles.form_section}>Add Authorized Users</h1>
+						<h3>User's Email To Add</h3>
+						<input
+							type="email"
+							placeholder="Authorized User's Email"
+							name="email_to_add"
+							onChange={handleAuthorizedUserUpdates}
+							required
+							className={styles.input}
+						/>
+						<button type="submit" className={styles.red_btn}>
+							Add Authorized User
+						</button>
+					</form>
+					<form className={styles.form_container_authorized_users} onSubmit={removeAuthorizedUser}>
+						<h1 className={styles.form_section}>Remove Authorized Users</h1>
+						<h3>User's Email To Remove</h3>
+						<input
+							type="email"
+							placeholder="Authorized User's Email"
+							name="email_to_remove"
+							onChange={handleAuthorizedUserUpdates}
+							required
+							className={styles.input}
+						/>
+						<button type="submit" className={styles.red_btn}>
+							Remove Authorized User
+						</button>
+					</form>
+				</div>
+				<div className={styles.current_users_admin}>
+					<h1 className={styles.section_text}>Authorized User's under User</h1>
+					<table>
+						<tbody>
+						<tr>
+							<th>First Name</th>
+							<th>Last Name</th>
+							<th>Email</th>
+						</tr>
+						{authorizedUsers.length ?
+							authorizedUsers.map(authorizedUsers => (
+								<tr>
+									<td>{authorizedUsers.firstName}</td>
+									<td>{authorizedUsers.lastName}</td>
+									<td>{authorizedUsers.email}</td>
+								</tr>
+							))
+							:
+							(<tr>
+								<td>-</td>
+								<td>-</td>
+								<td>-</td>
+							</tr>)
+						}
+						</tbody>
+					</table>
+					<h1 className={styles.section_text}>Properties under User</h1>
+					<table>
+						<tbody>
+						<tr>
+							<th>Property Name</th>
+							<th>Property Cost</th>
+							<th>Property Quantity</th>
+						</tr>
+						{getPropertyUserData.length ?
+							getPropertyUserData.map(getPropertyUserData => (
+								<tr>
+									<td>{getPropertyUserData.property_description}</td>
+									<td>{getPropertyUserData.property_cost}</td>
+									<td>{getPropertyUserData.property_quantity}</td>
+								</tr>
+							))
+							:
+							(<tr>
+								<td>-</td>
+								<td>-</td>
+								<td>-</td>
+							</tr>)
+						}
+						</tbody>
+					</table>
 				</div>
 			</div>
 			<footer>

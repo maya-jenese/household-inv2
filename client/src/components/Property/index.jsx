@@ -97,7 +97,7 @@ const Property = () => {
   }, [userData.email]);
 
   const deleteProperty = (id) => {
-    axios.delete(`http://localhost:8080/api/property/delete-property/${id}`);
+    //axios.delete(`http://localhost:8080/api/property/delete-property/${id}`);
   };
 
   //Set the page tab title

@@ -1,165 +1,206 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import styles from "./styles.module.css";
-import { useLocation, useNavigate } from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import logo from "../../logo_normal.png";
 import axios from "axios";
 
 function UpdateProperty() {
-  const { state } = useLocation();
-  const { description, cost, quantity } = state;
+	const {state} = useLocation();
+	const {description, cost, quantity} = state;
+	const [userData, setUserData] = useState({});
+	const [getPropertyUserData, setPropertyUserData] = useState({});
 
-  const navigate = useNavigate();
 
-  const navigateToProfile = () => {
-    navigate("/userprofile");
-  };
+	const navigate = useNavigate();
 
-  const navigateToProperty = () => {
-    navigate("/property");
-  };
+	const navigateToProfile = () => {
+		navigate("/userprofile");
+	};
 
-  const navigateToAdmin = () => {
-    navigate("/admin");
-  };
+	const navigateToProperty = () => {
+		navigate("/property");
+	};
 
-  const navigateHome = () => {
-    navigate("/");
-  };
+	const navigateToAdmin = () => {
+		navigate("/admin");
+	};
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.reload();
-  };
+	const navigateHome = () => {
+		navigate("/");
+	};
 
-  const [data, setData] = useState({
-    email: "",
-    firstName: "",
-    lastName: "",
-  });
+	const handleLogout = () => {
+		localStorage.removeItem("token");
+		window.location.reload();
+	};
 
-  const [propertyData, setPropertyData] = useState({
-    property_description: "",
-    property_cost: 0,
-    property_quantity: 0,
-  });
+	const [data, setData] = useState({
+		email: "",
+		firstName: "",
+		lastName: "",
+	});
 
-  const [error, setError] = useState("");
+	const [propertyData, setPropertyData] = useState({
+		property_description: "",
+		property_cost: 0,
+		property_quantity: 0,
+	});
 
-  useEffect(() => {
-    fetch("http://localhost:8080/api/users/getuserinfo", {
-      headers: { "Content-Type": "application/json" },
-      method: "POST",
-      body: JSON.stringify({ token: localStorage.getItem("token") }),
-    })
-      .then((response) => response.json())
-      .then((data) => setData(data));
-  });
+	const [error, setError] = useState("");
 
-  const handleChange = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    setPropertyData({
-      ...propertyData,
-      [name]: value,
-    });
-  };
+	useEffect(() => {
+		fetch("http://localhost:8080/api/users/getuserinfo", {
+			headers: {"Content-Type": "application/json"},
+			method: "POST",
+			body: JSON.stringify({token: localStorage.getItem("token")}),
+		})
+			.then((response) => response.json())
+			.then((userData) => setUserData(userData));
+	}, []);
 
-  const updateDetails = async (e) => {
-    e.preventDefault();
-    try {
-      console.log(data);
-      const url = "http://localhost:8080/api/update-property";
-      const { data: res } = await axios.post(url, data);
-      console.log(res.message);
-    } catch (error) {
-      if (
-        error.response &&
-        error.response.status >= 400 &&
-        error.response.status <= 500
-      ) {
-        setError(error.response.data.message);
-      }
-    }
-  };
+	let UsersProperty = [];
 
-  return (
-    <div className={styles.main_container}>
-      <nav className={styles.navbar}>
-        <img id={styles.logo} src={logo} />
-        <h1>West Boca Make-Believe Retirement Community</h1>
-        <div className={styles.buttons}>
-          <button className={styles.white_btn} onClick={navigateHome}>
-            Home
-          </button>
-          <button className={styles.white_btn} onClick={navigateToProperty}>
-            Property
-          </button>
-          <button className={styles.white_btn} onClick={navigateToProfile}>
-            Profile
-          </button>
-          <button
-            hidden={!data.isAdmin}
-            className={styles.white_btn}
-            onClick={navigateToAdmin}
-          >
-            Admin
-          </button>
-          <button
-            className={styles.white_btn}
-            id={styles.red_hover}
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
-        </div>
-      </nav>
-      <div id={styles.profile_area}>
-        <h1 id={styles.section_text}>Update Property</h1>
-        <div className={styles.row}>
-          <div className={styles.columns}>
-            <form className={styles.form_container} onSubmit={updateDetails}>
-              {" "}
-              {/* updateDetails NEEDS TO BE FIXED */}
-              <h1>Edit Property</h1>
-              <h3>Property Description</h3>
-              <input
-                type="text"
-                placeholder="Description"
-                name="property_description"
-                onChange={handleChange}
-                value={description}
-                required
-                className={styles.input}
-              />
-              <h3>Property Cost</h3>
-              <input
-                type="number"
-                placeholder="Cost"
-                name="property_cost"
-                onChange={handleChange}
-                value={cost}
-                required
-                className={styles.input}
-              />
-              <h3>Property Quantity</h3>
-              <input
-                type="number"
-                placeholder="Quantity"
-                name="property_quantity"
-                onChange={handleChange}
-                value={quantity}
-                required
-                className={styles.input}
-              />
-              <button type="submit" className={styles.green_btn}>
-                Update Property
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+	useEffect(async () => {
+		console.log(description);
+		if (userData.email !== undefined) {
+			getPropertyUserData.email = userData.email;
+			try {
+				console.log(userData.email);
+				const url = "http://localhost:8080/api/property/get-properties/";
+				const {userProperties: res} = await axios
+					.post(url, getPropertyUserData)
+					.then((response) => {
+						UsersProperty = response.data;
+						console.log(UsersProperty);
+						setPropertyUserData(response.data);
+					});
+			} catch (error) {
+				if (
+					error.response &&
+					error.response.status >= 400 &&
+					error.response.status <= 500
+				) {
+					setError(error.response.data.message);
+				}
+			}
+		}
+	}, [userData.email]);
+
+	const handleChange = (e) => {
+		const name = e.target.name;
+		const value = e.target.value;
+		setPropertyData({
+			...propertyData,
+			[name]: value,
+		});
+	};
+
+	const updateDetails = async (e) => {
+		e.preventDefault();
+		try {
+			console.log(data);
+			const url = "http://localhost:8080/api/update-property";
+			const {data: res} = await axios.post(url, data);
+			console.log(res.message);
+		} catch (error) {
+			if (
+				error.response &&
+				error.response.status >= 400 &&
+				error.response.status <= 500
+			) {
+				setError(error.response.data.message);
+			}
+		}
+	};
+
+	return (
+		<div className={styles.main_container}>
+			<nav className={styles.navbar}>
+				<img id={styles.logo} src={logo}/>
+				<h1>West Boca Make-Believe Retirement Community</h1>
+				<div className={styles.buttons}>
+					<button className={styles.white_btn} onClick={navigateHome}>
+						Home
+					</button>
+					<button className={styles.white_btn} onClick={navigateToProperty}>
+						Property
+					</button>
+					<button className={styles.white_btn} onClick={navigateToProfile}>
+						Profile
+					</button>
+					<button
+						hidden={!data.isAdmin}
+						className={styles.white_btn}
+						onClick={navigateToAdmin}
+					>
+						Admin
+					</button>
+					<button
+						className={styles.white_btn}
+						id={styles.red_hover}
+						onClick={handleLogout}
+					>
+						Logout
+					</button>
+				</div>
+			</nav>
+			<div id={styles.profile_area}>
+				<h1 id={styles.section_text}>Update Property</h1>
+				<div className={styles.row}>
+					<div className={styles.columns}>
+						<form className={styles.form_container} onSubmit={updateDetails}>
+							{/*
+								<select onChange={handlePropertyInfo}>
+									{getPropertyUserData.length ? (
+										getPropertyUserData.map((getPropertyUserData) => (
+											<option
+												value={getPropertyUserData._id}>{getPropertyUserData.property_description}</option>
+										))
+									) : (
+										<option value="-">-</option>
+									)}
+								</select>
+							*/}
+							<h1>Edit Property</h1>
+							<h3>Property Description</h3>
+							<input
+								type="text"
+								placeholder="Description"
+								name="property_description"
+								onChange={handleChange}
+								value={description}
+								required
+								className={styles.input}
+							/>
+							<h3>Property Cost</h3>
+							<input
+								type="number"
+								placeholder="Cost"
+								name="property_cost"
+								onChange={handleChange}
+								value={cost}
+								required
+								className={styles.input}
+							/>
+							<h3>Property Quantity</h3>
+							<input
+								type="number"
+								placeholder="Quantity"
+								name="property_quantity"
+								onChange={handleChange}
+								value={quantity}
+								required
+								className={styles.input}
+							/>
+							<button type="submit" className={styles.green_btn}>
+								Update Property
+							</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
 }
 
 export default UpdateProperty;
