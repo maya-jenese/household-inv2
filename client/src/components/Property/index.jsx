@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import logo from "../../logo_normal.png";
 import axios from "axios";
 import UpdateProperty from "../UpdateProperty";
+import viewImages from "../ViewImages";
 
 const Property = () => {
   const navigate = useNavigate();
@@ -32,6 +33,8 @@ const Property = () => {
     localStorage.removeItem("token");
     window.location.reload();
   };
+
+  const [imageId, setImageId] = useState({});
 
   const [userData, setUserData] = useState({});
 
@@ -100,6 +103,17 @@ const Property = () => {
     //axios.delete(`http://localhost:8080/api/property/delete-property/${id}`);
   };
 
+
+  function setImageData(e) {
+    imageId.property_id = e;
+
+    navigate("/ViewImages", {
+      state: {
+        property_id: imageId.property_id
+      },
+    });
+  }
+
   //Set the page tab title
   useEffect(() => {
     document.title =
@@ -161,9 +175,16 @@ const Property = () => {
                       {getPropertyUserData.property_quantity}
                       <button
                         className={styles.delete_btn}
-                        onClick={deleteProperty(getPropertyUserData.id)}
+                        onClick={deleteProperty(getPropertyUserData._id)}
                       >
                         Delete
+                      </button>
+                      <button
+                          value={getPropertyUserData._id}
+                          className={styles.view_images_btn}
+                          onClick={e => setImageData(e.target.value)}
+                      >
+                        View Images
                       </button>
                       <button
                         className={styles.update_btn}
