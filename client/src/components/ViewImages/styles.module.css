@@ -51,6 +51,10 @@ html {
     margin-right: 10px;
 }
 
+#no_images {
+    margin-left: 50px;
+}
+
 .white_btn:hover {
     background-color: #e2e2e2;
     transition: background-color 0.5s ease;
@@ -73,9 +77,30 @@ html {
     font-size: 14px;
 }
 
-#section_text {
+#section_text button {
+    clear: both;
+    float: left;
     text-decoration: none;
-    margin-left: 100px;
+    margin-left: 50px;
+}
+
+#property img {
+    border: 2px solid #049af8;
+    padding: 5px;
+    border-radius: 8px;
+    margin-top: 50px;
+    margin-left: 50px;
+    width: 15%;
+}
+
+#property img:hover {
+    filter: drop-shadow(0 0 0.75rem #049af8);
+    transition: filter 0.15s ease;
+    border: 2px solid #049af8;
+    border-radius: 8px;
+    margin-top: 50px;
+    margin-left: 50px;
+    width: 15%;
 }
 
 #add_user {
@@ -204,6 +229,13 @@ table {
     color: white;
     border-radius: 5px;
     text-align: center;
+}
+
+#add_img {
+    clear: left;
+    float: left;
+    margin-left: 50px;
+    margin-bottom: 10px;
 }
 
 table td, table th {
